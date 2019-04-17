@@ -9,6 +9,8 @@ export class Car {
       year: { type: String, maxlength: 24 },
       color: { type: String, maxlength: 24 },
       mileage: { type: String, maxlength: 24 },
+      image_url: { type: String, maxlength: 1000},
+      
       user_id: {
         type: Number,
         key: 'foreign',
