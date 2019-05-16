@@ -1,0 +1,105 @@
+import { Request, Response, NextFunction } from 'express'
+export class User {
+  _model: any;
+  constructor(norm: any) {
+    this.model = [{
+      id: { type: Number, key: 'primary' },
+      fullName: { type: String, maxlength: 24 },
+      email: { type: String, maxlength: 24 },
+      username: { type: String, maxlength: 24 },
+      password: { type: String, maxlength: 24 },
+      phoneNumber: { type: String, maxlength: 24 },
+
+    
+    }, 'A table to store user info',
+    [
+      {
+        route: '/get-all-users',
+        method: 'POST',
+        callback: this.getAllUsers,
+        requireToken: true,
+      },
+      {
+        route: '/get-user-by-id/:id',
+        method: 'POST',
+        callback: this.getUserById,
+        requireToken: true,
+      },
+      {
+        route: '/create-user',
+        method: 'POST',
+        callback: this.createUser,
+        requireToken: true,
+      },
+      {
+        route: '/update-user/id/:id',
+        method: 'PUT',
+        callback: this.updateUser,
+        requireToken: true,
+      },
+      {
+        route: '/delete/id/:id',
+        method: 'DELETE',
+        callback: this.deleteUser,
+        requireToken: true,
+      }
+    ]];
+  }
+  deleteUser(model: any) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      let userCtrl = model.controller;
+      let resp = await userCtrl.remove(req, null, null);
+      res.json({ message: 'Success', resp });
+    }
+  }
+  updateUser(model: any) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      console.log('req.body===>', req.body);
+      let userCtrl = model.controller;
+      let resp = await userCtrl.update(req, null, null);
+      console.log('resp from update', resp);
+      res.json({ message: 'Success', resp });
+    }
+  }
+  createUser(model: any) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      console.log('req.body===>', req.body);
+      let userCtrl = model.controller;
+      let resp = await userCtrl.insert(req, null, null);
+      res.json({ message: 'Success', resp });
+    }
+  }
+  getAllUsers(model: any) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      req.body = {
+        get: ['*']
+      }
+      let userCtrl = model.controller;
+      let resp = await userCtrl.get(req, null, null);
+      res.json({ message: 'Success', resp });
+    }
+  }
+
+  getUserById(model: any) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      req.body = {
+        get: ['*'],
+        where: {
+          id: req.params.id
+        }
+      }
+      let userCtrl = model.controller;
+      let resp = await userCtrl.get(req, null, null);
+      res.json({ message: 'Success', resp });
+    }
+  }
+
+  set model(model: any) {
+    this._model = model;
+  }
+
+  get model() {
+    return this._model;
+  }
+
+}
